@@ -15,11 +15,14 @@ public class ConcentrationController : MonoBehaviour {
 	private int _moveOffset = 1;
 	[SerializeField]
 	private List<Vector3> _potentialLocations;
+	[SerializeField]
+	private int Segments = 10;
 
 	// PUBLIC ACCESSORS AND INFO PROVIDERS //
 	public  PlayerInformationProvider PlayerInformationProvider { get; }
 	public Vector3 SlerpToPosition { get; private set; }
-
+	private int postiionIndex = 0;
+	public Vector3[] PotentialPositions;
 	Queue<MoveDirection> playerMoves;
 
 	// Use this for initialization
@@ -36,6 +39,15 @@ public class ConcentrationController : MonoBehaviour {
 		var centreOfCamera = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
 
 		transform.position = LocationProvider.Test(transform);
+		var locations = LocationProvider.ProvideLocations(Segments, transform);
+		PotentialPositions = locations.ToArray();
+
+		foreach(var locat in locations)
+		{
+			var gob = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			gob.transform.position = locat;
+		}
+		transform.position = PotentialPositions[postiionIndex];
 	}
 	
 	// Update is called once per frame
@@ -54,7 +66,7 @@ public class ConcentrationController : MonoBehaviour {
 		{
 			ApplyMove(playerMoves.Dequeue());
 		}
-
+		transform.position = PotentialPositions[postiionIndex];
 	}
 
 	public bool TryProvideMove(out MoveDirection direction)
@@ -77,9 +89,15 @@ public class ConcentrationController : MonoBehaviour {
 
 	public void ApplyMove(MoveDirection move)
 	{
-		var directionAsint = (float)move;
+		var directionAsint = (int)move;
 
-		this.transform.position = new Vector3(this.transform.position.x + (5.0f * directionAsint), this.transform.position.y, this.transform.position.z);
+		var potentialNewIndex = postiionIndex + directionAsint;
+		if(potentialNewIndex > Segments -1 || potentialNewIndex < 0)
+		{
+			return;
+		}
+
+		postiionIndex = potentialNewIndex;
 	}
 
 	
