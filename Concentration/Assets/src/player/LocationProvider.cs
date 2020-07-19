@@ -8,21 +8,32 @@ public static class LocationProvider  {
     // Move these to configuration //
     static float PlayerPositionOffsetMultiplier = 1.5f;
 
-    public static List<Vector3> ProvideLocations(int numberOfLocations, GameObject player)
+    public static List<Vector3> ProvideLocations(int numberOfLocations, Transform player)
     {
         var centreOfCamera = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
         var cameraSizeVector = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0));
         var horizontalSizeOfCamera = cameraSizeVector.x * 2.0f;
         var verticalSizeOfCamera = cameraSizeVector.y * 2.0f;
 
-        var distanceBetweenLocations = horizontalSizeOfCamera / player.transform.localScale.y / 2.0f;
+        var horizontalMovementIncrements = horizontalSizeOfCamera / (numberOfLocations);
 
-        var listOfLocations = new List<Vector3>();
-        for(int i = 0; i < numberOfLocations; i++)
+        var leftMostPositionX = cameraSizeVector.x * -1;
+        var verticalOffset = 0;
+
+        var currentLeftMostThreshold = leftMostPositionX;
+        var PossibleLocations = new List<Vector3>();
+
+        for (int i = 0; i < numberOfLocations; i++)
         {
-            var newLocationToAdd = new Vector3();
+            var nextSpawnXPosition = currentLeftMostThreshold + (horizontalMovementIncrements * 0.5f);
+
+            var newPosition = new Vector3(nextSpawnXPosition, centreOfCamera.y + player.localScale.y * 2.0f
+      , 0);
+
+            currentLeftMostThreshold += horizontalMovementIncrements;
+            PossibleLocations.Add(newPosition);
         }
-        return null;
+        return PossibleLocations;
     }
 
     public static Vector3 Test(Transform originalTransform)

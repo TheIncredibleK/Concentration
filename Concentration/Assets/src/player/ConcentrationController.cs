@@ -15,12 +15,19 @@ public class ConcentrationController : MonoBehaviour {
 	private int _moveOffset = 1;
 	[SerializeField]
 	private List<Vector3> _potentialLocations;
+	[SerializeField]
+	private int Segments = 10;
 
 	// PUBLIC ACCESSORS AND INFO PROVIDERS //
 	public  PlayerInformationProvider PlayerInformationProvider { get; }
 	public Vector3 SlerpToPosition { get; private set; }
-
+	private int postiionIndex = 2;
+	public Vector3[] PotentialPositions;
 	Queue<MoveDirection> playerMoves;
+
+	// PRIVATE VARIABLES //
+	private GameObject playerObject;
+	
 
 	// Use this for initialization
 	void Start () 
@@ -28,7 +35,7 @@ public class ConcentrationController : MonoBehaviour {
 		playerMoves = new Queue<MoveDirection>();
 		_potentialLocations = new List<Vector3>();
 		SetupLocationsList();
-
+		playerObject = ObjectProvider.ProvidePlayer();
 	}
 	// Set Up //
 	private void SetupLocationsList()
@@ -36,6 +43,8 @@ public class ConcentrationController : MonoBehaviour {
 		var centreOfCamera = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
 
 		transform.position = LocationProvider.Test(transform);
+		var locations = LocationProvider.ProvideLocations(Segments, transform);
+		PotentialPositions = locations.ToArray();
 	}
 	
 	// Update is called once per frame
@@ -47,14 +56,17 @@ public class ConcentrationController : MonoBehaviour {
 		{
 			Debug.Log("Got a move = " + moveDirection.ToString());
 			playerMoves.Enqueue(moveDirection);
-		}
+		} 
 
-		// TODO: Move this '1' to a variable in a settings file
 		if (playerMoves.Count > _moveOffset)
 		{
 			ApplyMove(playerMoves.Dequeue());
+			Debug.Log("Applied a move");
 		}
 
+
+		// Last to call
+		ConstantlySlerpTowardsDesiredLocation();
 	}
 
 	public bool TryProvideMove(out MoveDirection direction)
@@ -77,10 +89,20 @@ public class ConcentrationController : MonoBehaviour {
 
 	public void ApplyMove(MoveDirection move)
 	{
-		var directionAsint = (float)move;
+		var directionAsint = (int)move;
 
-		this.transform.position = new Vector3(this.transform.position.x + (5.0f * directionAsint), this.transform.position.y, this.transform.position.z);
+		var potentialNewIndex = postiionIndex + directionAsint;
+		if(potentialNewIndex > Segments -1 || potentialNewIndex < 0)
+		{
+			return;
+		}
+
+		postiionIndex = potentialNewIndex;
 	}
 
+	private void ConstantlySlerpTowardsDesiredLocation()
+	{
+		playerObject.transform.position = Vector3.Lerp(playerObject.transform.position, PotentialPositions[postiionIndex], 0.25f);
+	}
 	
 }
