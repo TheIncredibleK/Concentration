@@ -8,8 +8,9 @@ public static class LocationProvider  {
     // Move these to configuration //
     static float PlayerPositionOffsetMultiplier = 1.5f;
 
-    public static List<Vector3> ProvideLocations(int numberOfLocations, Transform player)
+    public static List<Vector3> ProvideLocations(Transform player)
     {
+        int numberOfLocations = Constants.GameStateConstants.LOCATION_AMT;
         var centreOfCamera = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
         var cameraSizeVector = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0));
         var horizontalSizeOfCamera = cameraSizeVector.x * 2.0f;
