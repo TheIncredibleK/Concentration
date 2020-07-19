@@ -21,9 +21,13 @@ public class ConcentrationController : MonoBehaviour {
 	// PUBLIC ACCESSORS AND INFO PROVIDERS //
 	public  PlayerInformationProvider PlayerInformationProvider { get; }
 	public Vector3 SlerpToPosition { get; private set; }
-	private int postiionIndex = 0;
+	private int postiionIndex = 2;
 	public Vector3[] PotentialPositions;
 	Queue<MoveDirection> playerMoves;
+
+	// PRIVATE VARIABLES //
+	private GameObject playerObject;
+	
 
 	// Use this for initialization
 	void Start () 
@@ -31,7 +35,7 @@ public class ConcentrationController : MonoBehaviour {
 		playerMoves = new Queue<MoveDirection>();
 		_potentialLocations = new List<Vector3>();
 		SetupLocationsList();
-
+		playerObject = ObjectProvider.ProvidePlayer();
 	}
 	// Set Up //
 	private void SetupLocationsList()
@@ -41,13 +45,6 @@ public class ConcentrationController : MonoBehaviour {
 		transform.position = LocationProvider.Test(transform);
 		var locations = LocationProvider.ProvideLocations(Segments, transform);
 		PotentialPositions = locations.ToArray();
-
-		foreach(var locat in locations)
-		{
-			var gob = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			gob.transform.position = locat;
-		}
-		transform.position = PotentialPositions[postiionIndex];
 	}
 	
 	// Update is called once per frame
@@ -59,14 +56,17 @@ public class ConcentrationController : MonoBehaviour {
 		{
 			Debug.Log("Got a move = " + moveDirection.ToString());
 			playerMoves.Enqueue(moveDirection);
-		}
+		} 
 
-		// TODO: Move this '1' to a variable in a settings file
 		if (playerMoves.Count > _moveOffset)
 		{
 			ApplyMove(playerMoves.Dequeue());
+			Debug.Log("Applied a move");
 		}
-		transform.position = PotentialPositions[postiionIndex];
+
+
+		// Last to call
+		ConstantlySlerpTowardsDesiredLocation();
 	}
 
 	public bool TryProvideMove(out MoveDirection direction)
@@ -100,5 +100,9 @@ public class ConcentrationController : MonoBehaviour {
 		postiionIndex = potentialNewIndex;
 	}
 
+	private void ConstantlySlerpTowardsDesiredLocation()
+	{
+		playerObject.transform.position = Vector3.Lerp(playerObject.transform.position, PotentialPositions[postiionIndex], 0.25f);
+	}
 	
 }

@@ -27,7 +27,8 @@ public static class LocationProvider  {
         {
             var nextSpawnXPosition = currentLeftMostThreshold + (horizontalMovementIncrements * 0.5f);
 
-            var newPosition = new Vector3(nextSpawnXPosition, centreOfCamera.y + player.localScale.y * 2.0f, 0);
+            var newPosition = new Vector3(nextSpawnXPosition, centreOfCamera.y + player.localScale.y * 2.0f
+      , 0);
 
             currentLeftMostThreshold += horizontalMovementIncrements;
             PossibleLocations.Add(newPosition);
