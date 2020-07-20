@@ -12,7 +12,8 @@ public static class ObjectProvider  {
 
     public static PrefabProvider ProvidePrefabProvider()
     {
-        return ProvideSingleGameObjectWithTag(Constants.Tags.PLAYER).GetComponent<PrefabProvider>();
+        var prefabProvider = ProvideSingleGameObjectWithTag(Constants.Tags.PREFAB_PROVIDER).GetComponent<PrefabProvider>();
+        return prefabProvider;
     }
 
 

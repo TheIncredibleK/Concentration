@@ -9,7 +9,7 @@ public class LaneSpawner : MonoBehaviour {
 	[SerializeField]
 	private GameObject player;
 	[SerializeField]
-	private PrefabProvider PrefabProvider { get; private set; }
+	private PrefabProvider PrefabProvider;
 
 	// Preferable this should be out of view of camera
 	[SerializeField]
@@ -18,11 +18,13 @@ public class LaneSpawner : MonoBehaviour {
 	void Start () {
 		PrefabProvider = ObjectProvider.ProvidePrefabProvider();
 		player = ObjectProvider.ProvidePlayer();
-		_potentialLocations = LocationProvider.ProvideLocations(player.transform).ToArray();	
+		_potentialLocations = LocationProvider.ProvideLocations(player.transform).ToArray();
+		SpawnLane();
 	}
 	
 	public void SpawnLane()
 	{
+		var obstacles = new List<GameObject>();
 		foreach(var location in _potentialLocations)
 		{
 			var newObstacle = Instantiate(PrefabProvider.Obstacle);

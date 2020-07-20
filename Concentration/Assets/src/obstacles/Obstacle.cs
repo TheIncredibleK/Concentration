@@ -10,4 +10,9 @@ public class Obstacle : MonoBehaviour {
 	void Start () {
 		MovementSpeed = Constants.GameStateConstants.OBSTACLE_SPEED;
 	}
+
+	void Update()
+	{
+		transform.position += Vector3.down * Constants.GameStateConstants.OBSTACLE_SPEED * Time.deltaTime;
+	}
 }

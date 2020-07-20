@@ -41,8 +41,6 @@ public class ConcentrationController : MonoBehaviour {
 	private void SetupLocationsList()
 	{
 		var centreOfCamera = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
-
-		transform.position = LocationProvider.Test(transform);
 		var locations = LocationProvider.ProvideLocations(transform);
 		PotentialPositions = locations.ToArray();
 	}
